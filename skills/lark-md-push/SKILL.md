@@ -2,7 +2,7 @@
 name: lark-md-push
 description: 将本地 Markdown (.md) 极速直推/更新到飞书云文档（Docx/Wiki）。当用户需要把本地 markdown 文件上传、发布、创建、追加或同步到飞书云文档时使用。绕过复杂的 DocxXML 规则推理，直接通过原生 Markdown 极速直达。
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   requires-bin: "lark-cli"
 license: MIT
 ---
@@ -14,7 +14,10 @@ license: MIT
 **核心原则**：
 - **拒绝链路膨胀**：不要查阅任何复杂的 DocxXML 块结构规则，严禁进入多轮格式校验推理。
 - **原生 Markdown 通道**：利用 `lark-cli docs +create` 和 `lark-cli docs +update` 的 `--doc-format markdown` 原生通道直推。
-- **文件直传**：长文本或多行 Markdown 优先使用 `@./path/to/file.md` 或临时相对路径传参，规避 shell 转义损坏。
+- **智能防顶评论（Smart Guardrail）**：
+  - 更新文档时，先通过轻量只读检查目标文档是否存在未解决评论（`reference_map.comments`）。
+  - **无评论时**：直接执行 `--command overwrite` 全量覆写，速度最快、版面最干净。
+  - **有评论时**：严格退回 `--command append` 追加模式（或先提示用户），严禁使用 `overwrite` 误伤划词批注与讨论历史。
 
 ---
 
@@ -44,11 +47,14 @@ license: MIT
 1. **`@file` 路径限制**：
    - `lark-cli` 的 `--content @file` 只接受**当前工作目录下的相对路径**（例如 `@./doc.md` 或 `@sub/doc.md`），绝对路径（如 `@/tmp/doc.md`）会报 `unsafe file path`。
    - 若本地文件在其他路径，可将其复制或软链到当前目录的临时相对路径（如 `./_content.md`），推完后清理。
-2. **更新模式选择**：
-   - **追加内容**（默认推荐）：`--command append --doc-format markdown --content @./path.md`。
-   - **整篇重写**（全量覆盖）：`--command overwrite --doc-format markdown --content @./path.md`（注意：`overwrite` 会重新生成 block ID，远端原有划词批注和历史评论会丢失，仅在用户明确要求覆盖时使用）。
-3. **本地图片引用支持**：
-   - Markdown 中的本地图片写为 `![alt](@./relative/path.png)`，`lark-cli` 在导入 Markdown 时会自动解析并上传当前工作目录下的本地图片。
+2. **评论保护与覆写判断规则**：
+   - 飞书的划词评论严格锚定在 `block_id` 上。`overwrite` 会清空整篇文档并重新生成全部 block ID，导致历史评论全部丢失。
+   - 更新文档前，运行只读检查：
+     ```bash
+     lark-cli docs +fetch --doc "<doc_token>" --detail simple --json -q '.data.document.reference_map.comments // {} | length'
+     ```
+     - **返回 `0`（无评论）**：直接使用 `--command overwrite` 全量覆写，速度最快。
+     - **返回 `> 0`（存在评论）**：**禁止使用 overwrite**，自动降级为 `--command append` 追加，并告知用户“文档存在评论，已自动采用追加模式以保全评论”。
 
 ---
 
@@ -70,17 +76,25 @@ lark-cli docs +create --title "文档标题" --parent-token "<folder_or_wiki_tok
 
 ---
 
-### 场景 B：更新或追加到已有云文档
+### 场景 B：更新已有云文档（智能覆写/追加）
 
-用户提供已有飞书云文档 URL 或 token：
+当用户需要把本地 Markdown 同步到已有飞书文档时：
 
-```bash
-# 1. 追加到文档末尾（最常用、最安全，不破坏已有内容与评论）
-lark-cli docs +update --doc "<doc_url_or_token>" --command append --doc-format markdown --content @./path/to/file.md --as user
+1. **第一步：快速检测有无评论**
+   ```bash
+   has_comments=$(lark-cli docs +fetch --doc "<doc_url_or_token>" --detail simple --json -q '.data.document.reference_map.comments // {} | length')
+   ```
 
-# 2. 全量覆盖现有文档（仅在用户明确指示全量覆盖/重写时使用）
-lark-cli docs +update --doc "<doc_url_or_token>" --command overwrite --doc-format markdown --content @./path/to/file.md --as user
-```
+2. **第二步：根据评论状态决定指令**
+   - **Case 1：无评论 (`has_comments == 0`) ➔ 极速全量覆写**：
+     ```bash
+     lark-cli docs +update --doc "<doc_url_or_token>" --command overwrite --doc-format markdown --content @./path/to/file.md --as user
+     ```
+   - **Case 2：有评论 (`has_comments > 0`) ➔ 安全追加模式**：
+     ```bash
+     lark-cli docs +update --doc "<doc_url_or_token>" --command append --doc-format markdown --content @./path/to/file.md --as user
+     ```
+     *(并在输出中向用户说明：文档包含划词评论，为避免评论丢失，已采用追加模式更新)*
 
 ---
 
@@ -88,4 +102,4 @@ lark-cli docs +update --doc "<doc_url_or_token>" --command overwrite --doc-forma
 
 执行完毕后：
 1. 检查返回的 JSON 中是否包含 `"ok": true`。
-2. 向用户返回创建或更新后的飞书文档 URL / token。
+2. 向用户返回文档链接，并明确说明本次是“无评论极速覆写”还是“有评论安全追加”。
