@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "skills": {
+    "lark-md-pull": {
+      "source": ".",
+      "sourceType": "local",
+      "computedHash": "101033b4cf50de93b9b28bf0ce27b4b7d9eaaaf0c3026d4fb2661c64d5cd9651"
+    },
+    "lark-md-push": {
+      "source": ".",
+      "sourceType": "local",
+      "computedHash": "230a4bdf63e3d56d0aa6037ddb4cddd11dd63ba61fb4fb409945f40ad0789259"
+    }
+  }
+}
