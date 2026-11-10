@@ -2,7 +2,7 @@
 
 专为 AI Agent（Claude Code、Antigravity、Cursor、Windsurf 等）打造的本地 Markdown (`.md`) 与飞书云文档极速读写技能套件。
 
-解决官方 `lark-doc` 规则繁重、思考链路慢、上下文 Token 消耗大以及图片素材易断链的问题。
+解决官方 `lark-doc` 规则繁重、思考链路慢、上下文 Token 消耗大以及多文档图片素材易冲突断链的问题。
 
 ## 安装
 
@@ -12,7 +12,7 @@ npx -y skills add DBinK/lark-md-sync -g -y
 
 一次安装即包含套件内的全部 Skills：
 - **`lark-md-push`**：本地 Markdown 直推到飞书云文档（支持新建与追加/更新）。
-- **`lark-md-pull`**：飞书云文档拉取为本地 Markdown（自动下载图片到 `assets/` 并重写相对路径）。
+- **`lark-md-pull`**：飞书云文档拉取为本地 Markdown（自动 Unicode Slugify 去空格，图片自动归档至 `<doc>.assets/` 专属伴生目录并重写相对路径）。
 
 ---
 
@@ -31,8 +31,11 @@ npx -y skills add DBinK/lark-md-sync -g -y
 
 ### 2. 从飞书拉取（`lark-md-pull`）
 
-- **拉取文档并保存图片**：
-  > “把这篇飞书文档拉取到本地保存为 `README.md`，图片帮我放 `assets/` 目录：`https://example.feishu.cn/docx/xxxxx`。”
+- **拉取文档（自动去空格与伴生素材归档）**：
+  > “把这篇飞书文档拉取到本地：`https://example.feishu.cn/docx/xxxxx`。”  
+  > *（AI 会自动将标题转为无空格的 `<slug>.md`，并将图片下载至专属的 `<slug>.assets/` 目录中）*
+- **指定文件名拉取**：
+  > “把这篇飞书文档拉取并保存为 `system-design.md`：`https://example.feishu.cn/docx/xxxxx`。”
 - **备份文档**：
   > “帮我把这个 Wiki 知识库页面导出成本地 Markdown 备份。”
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pull a Lark document as Markdown, download images to assets/, and rewrite local paths."""
+"""Pull a Lark document as Markdown, download images to a per-doc assets folder, and rewrite local paths."""
 
 from __future__ import annotations
 
@@ -14,6 +14,39 @@ from pathlib import Path
 def run_command(cmd: list[str]) -> subprocess.CompletedProcess[str]:
     """Run a shell command safely and return output."""
     return subprocess.run(cmd, capture_output=True, text=True, check=False)
+
+
+def slugify_title(title: str) -> str:
+    """Convert title to safe, space-free Unicode slug using hyphens.
+
+    Preserves Chinese/CJK characters and alphanumerics, replaces spaces and symbols with single hyphen.
+    """
+    # Strip whitespace
+    s = title.strip()
+    # Remove leading markdown heading hashes like '# ' or '## '
+    s = re.sub(r"^#+\s*", "", s)
+    # Replace whitespace and unsafe filename/URL characters with hyphen
+    # Characters replaced: space, tab, newline, / \ : * ? " < > | ( ) [ ] { } （ ） 【 】 、 ， 。 , . / ~ ` ! @ # $ % ^ & + = ; '
+    s = re.sub(r'[\s/\\:*?"<>|()\[\]{}（）【】、，。,\'"`~!@#$%^&+;=]+', "-", s)
+    # Collapse multiple hyphens
+    s = re.sub(r"-+", "-", s).strip("-")
+    # Lowercase ASCII characters only (leaves Unicode CJK intact)
+    s = s.lower()
+    return s or "untitled"
+
+
+def extract_title_from_markdown(content: str) -> str:
+    """Extract document title from the first heading or first non-empty line of markdown."""
+    for line in content.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        # If it's a markdown heading
+        if line.startswith("#"):
+            return re.sub(r"^#+\s*", "", line).strip()
+        # Fallback to the first non-empty line
+        return line[:50].strip()
+    return "untitled"
 
 
 def fetch_lark_doc_markdown(doc_target: str, identity: str = "user") -> str:
@@ -78,9 +111,6 @@ def process_markdown_media(
     content: str, doc_target: str, assets_dir: Path, identity: str = "user"
 ) -> str:
     """Extract media tokens and Lark images, download them to assets_dir, and rewrite URLs."""
-    # Pattern 1: Standard markdown images with lark media token or internal path: ![alt](token) or ![alt](url)
-    # Pattern 2: Lark DocxXML fallback images: <img token="boxcn..." .../> or <img href="..."/>
-
     token_pattern = re.compile(r"!\[(.*?)\]\(([a-zA-Z0-9_\-]+)\)")
     img_tag_pattern = re.compile(r'<img\s+[^>]*token=["\']([a-zA-Z0-9_\-]+)["\'][^>]*\/?>')
 
@@ -88,14 +118,12 @@ def process_markdown_media(
     def replace_md_token(match: re.Match[str]) -> str:
         alt = match.group(1)
         token = match.group(2)
-        # Avoid rewriting http(s) urls or local paths
         if token.startswith("http://") or token.startswith("https://") or "/" in token or "." in token:
             return match.group(0)
 
         ext = ".png"
         target_file = assets_dir / f"{token}{ext}"
         if download_media(doc_target, token, target_file, identity):
-            # Use relative path from output markdown's perspective
             return f"![{alt}]({assets_dir.name}/{token}{ext})"
         return match.group(0)
 
@@ -116,19 +144,19 @@ def process_markdown_media(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Pull Lark doc to local Markdown with media assets"
+        description="Pull Lark doc to local Markdown with dedicated per-doc assets folder"
     )
     parser.add_argument("doc", help="Lark document URL or token")
     parser.add_argument(
         "-o",
         "--output",
-        default="README.md",
-        help="Local output markdown path (default: README.md)",
+        default="",
+        help="Local output markdown path (default: auto-detected from title as <slug>.md)",
     )
     parser.add_argument(
         "--assets-dir",
-        default="assets",
-        help="Assets directory relative to output directory (default: assets)",
+        default="",
+        help="Assets directory name or path (default: <filename>.assets)",
     )
     parser.add_argument(
         "--as",
@@ -140,13 +168,30 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    output_path = Path(args.output).resolve()
-    assets_dir = output_path.parent / args.assets_dir
-
     print(f"Fetching document: {args.doc} ...")
     content = fetch_lark_doc_markdown(args.doc, identity=args.identity)
 
-    print("Processing multi-media assets...")
+    # Determine output markdown path
+    if args.output:
+        output_path = Path(args.output).resolve()
+        # If output filename has spaces, slugify stem
+        if " " in output_path.name:
+            clean_stem = slugify_title(output_path.stem)
+            output_path = output_path.with_name(f"{clean_stem}{output_path.suffix}")
+    else:
+        title = extract_title_from_markdown(content)
+        slug = slugify_title(title)
+        output_path = Path(f"{slug}.md").resolve()
+
+    # Determine dedicated assets directory: <doc_name>.assets/
+    if args.assets_dir:
+        assets_dir = Path(args.assets_dir)
+        if not assets_dir.is_absolute():
+            assets_dir = output_path.parent / assets_dir
+    else:
+        assets_dir = output_path.parent / f"{output_path.stem}.assets"
+
+    print("Processing multi-media assets into dedicated folder...")
     processed_content = process_markdown_media(
         content, args.doc, assets_dir=assets_dir, identity=args.identity
     )
@@ -158,6 +203,8 @@ def main() -> None:
     tmp_path.replace(output_path)
 
     print(f"Successfully saved Markdown to: {output_path}")
+    if assets_dir.exists() and any(assets_dir.iterdir()):
+        print(f"Assets downloaded to: {assets_dir}")
 
 
 if __name__ == "__main__":
