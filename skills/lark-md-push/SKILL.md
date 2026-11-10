@@ -1,8 +1,8 @@
 ---
 name: lark-md-push
-description: 将本地 Markdown (.md) 极速直推/更新到飞书云文档（Docx/Wiki）。当用户需要把本地 markdown 文件上传、发布、创建、追加或同步到飞书云文档时使用。绕过复杂的 DocxXML 规则推理，直接通过原生 Markdown 极速直达。
+description: 将本地 Markdown (.md) 极速直推/更新到飞书云文档（Docx/Wiki）。当用户需要把本地 markdown 文件上传、发布、创建、追加或同步到飞书云文档，或提到“推送到飞书”“Markdown建飞书文档”“更新飞书文档”“上传md到飞书”时使用。绕过复杂的 DocxXML 规则推理，直接通过原生 Markdown 极速直达。纯读取/下载飞书文档不适用（使用 lark-md-pull）。
 metadata:
-  version: "0.2.0"
+  version: "0.2.1"
   requires-bin: "lark-cli"
 license: MIT
 ---

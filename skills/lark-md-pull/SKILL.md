@@ -1,8 +1,8 @@
 ---
 name: lark-md-pull
-description: 从飞书云文档（Docx/Wiki）拉取并导出为本地 Markdown (.md)，并自动下载图片附件到文档专属的 <doc_name>.assets/ 伴生目录并改写相对路径。当用户需要将飞书文档导出、下载、备份或同步到本地 markdown 时使用。
+description: 从飞书云文档（Docx/Wiki）拉取并导出为本地 Markdown (.md)，并自动下载图片附件到文档专属的 <doc_name>.assets/ 伴生目录并改写相对路径。当用户需要将飞书文档导出、下载、备份或同步到本地 markdown，或提到“拉取飞书文档”“下载飞书文档为md”“导出飞书云文档”时使用。纯上传/创建飞书文档不适用（使用 lark-md-push）。
 metadata:
-  version: "0.2.0"
+  version: "0.2.1"
   requires-bin: "lark-cli"
 license: MIT
 ---
