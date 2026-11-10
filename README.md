@@ -1,5 +1,11 @@
 # ⚡ lark-md-sync
 
+[![skills.sh](https://skills.sh/b/DBinK/lark-md-sync)](https://skills.sh/DBinK/lark-md-sync)
+[![GitHub stars](https://img.shields.io/github/stars/DBinK/lark-md-sync?style=flat&color=yellow)](https://github.com/DBinK/lark-md-sync/stargazers)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Compatible](https://img.shields.io/badge/Compatible-Any_Agent-8A2BE2)](README.md#-怎么使用)
+[![Performance](https://img.shields.io/badge/Token_Saved-90%25+-brightgreen)](README.md#-为什么需要-lark-md-sync)
+
 > **专为 AI Coding Agents 打造的本地 Markdown (`.md`) ↔ 飞书云文档极速读写套件。**  
 > 一行命令直达，摆脱繁冗的 DocxXML 规则推理，单次同步节约 90%+ Token。
 
