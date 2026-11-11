@@ -22,7 +22,7 @@
 | **执行模式** | 渐进式加载 DocxXML 规则，多轮解析 | **单轮直达**：原生 Markdown 通道直推/直拉 |
 | **思考轮次** | 4 ~ 6 轮（读规则 → 查 ID → 差异比对 → 逐步 Patch） | **1 轮完成** |
 | **Token 消耗** | 约 20,000 ~ 50,000 Tokens / 次 | **< 1,500 Tokens / 次（降低 90%+）** |
-| **评论安全** | 规则繁杂，误调 overwrite 易丢失评论 | **智能护栏**：自动检测评论，无评论极速覆写，有评论严格追加保全 |
+| **评论安全** | 规则繁杂，误调 overwrite 易丢失评论 | **锚点安全护栏**：自动检测评论；无评论极速覆写，有评论走定点安全编辑与前后锚点校验，杜绝评论脱锚 |
 | **多文章素材** | 混合塞入全局 `assets/`，容易冲突覆盖 | **`<doc>.assets/` 专属伴生目录**（Typora 规范） |
 | **跨平台文件名** | 飞书标题常含空格与特殊符号，终端易转义报错 | **自动 Unicode Slugify**（去空格，对终端与 Git 极度友好） |
 | **任务语义** | 推与拉混在一个庞大 Skill 中，Agent 易纠结方向 | **`push` 与 `pull` 职责明确解耦**，零认知摇摆 |
@@ -52,7 +52,7 @@ npx -y skills add DBinK/lark-md-sync -g -y
 - **推送到飞书**：
   > “帮我把 `./docs/design.md` 推送到飞书新建一篇云文档，标题叫‘系统架构设计’。”  
   > “把本地最新的 `README.md` 同步到这篇飞书文档：`https://example.feishu.cn/docx/xxxxx`。”  
-  > *(AI 会自动探测该文档：无评论时极速覆写，有评论时自动转为安全追加以保全评论)*
+  > *(AI 会自动探测该文档：无评论时极速覆写；有评论时走定点安全编辑与锚点一致性比对，避免划词批注脱锚)*
 - **从飞书拉取**：
   > “把这篇飞书文档拉取到本地：`https://example.feishu.cn/docx/xxxxx`。”  
   > *(飞书标题 `系统设计 2.0 (草案)` 会自动保存为 `系统设计-2.0-草案.md`，图片自动下载到 `系统设计-2.0-草案.assets/` 并重写为相对路径)*
@@ -77,7 +77,7 @@ npx -y skills add DBinK/lark-md-sync -g -y
 ## 🛠️ 设计考量 (Design Highlights)
 
 - **原生通道优先 (Markdown-Native)**：充分利用 `lark-cli` 原生 `--doc-format markdown` 能力，绕开高耗损的 DocxXML 抽象层。
-- **智能防顶评论 (Smart Guardrail)**：更新云文档前先探测 `reference_map.comments`。文档无评论时，走 `--command overwrite` 极速整篇覆写，干净彻底；检测到有讨论/划词评论时，强制回退到 `--command append` 追加模式，保证团队沟通资产不丢失。
+- **锚点安全与防顶评论 (Anchor-Safe Guardrail)**：更新云文档前先探测 `reference_map.comments`。文档无评论时，走 `--command overwrite` 极速整篇覆写，干净彻底；检测到有讨论/划词评论时，提供完整的【写前快照 ➔ 目标块检测 ➔ 避开带评论列表 ➔ 写后严格比对】定点安全编辑流程，杜绝 block 重建导致划词批注永久脱锚。大篇幅追加仅在独立新增章节时使用，避免整篇 append 导致正文重复。
 - **伴生素材隔离 (Per-Doc Assets)**：对齐 Typora 与现代 Markdown 生态规范，每篇文档独立拥有 `<filename>.assets/`，文章重命名、移动或删除时素材生命周期与正文保持一致。
 - **Unicode Slugify**：保留中文语义的同时剔除空格和特殊符号，在 CLI 和脚本中无需繁琐的引号转义。
 - **协议防断裂 (Protocol Resilient)**：内置动态指针自适应本地 `lark-cli` 最新规范，防止版本迭代参数废弃。
