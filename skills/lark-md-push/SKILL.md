@@ -1,8 +1,9 @@
 ---
 name: lark-md-push
-description: 将本地 Markdown (.md) 极速直推/更新到飞书云文档（Docx/Wiki）。当用户需要把本地 markdown 文件上传、发布、创建、追加或同步到飞书云文档，或提到“推送到飞书”“Markdown建飞书文档”“更新飞书文档”“上传md到飞书”时使用。绕过复杂的 DocxXML 规则推理，直接通过原生 Markdown 极速直达。纯读取/下载飞书文档不适用（使用 lark-md-pull）。
+description: >-
+  凡需要将本地文件同步到飞书云文档，或直接在线修改、更新、增补飞书云文档（Docx / Wiki）正文内容时，优先使用本技能——即使用户只说“更新飞书文档”“改一下飞书这段话”“增量同步”“保留原评论修改”，而未提到“Markdown”或“.md”。覆盖：本地 .md 发布新建、无评论整篇覆写，以及保留已有评论/划词批注与排版前提下的定点增量修改。不适用于：纯读取摘要（走 lark-doc）、导出本地（走 lark-md-pull）、飞书云盘原生 .md 静态文件（走 lark-markdown），或仅操作文档内画板与思维笔记（走 lark-doc）。
 metadata:
-  version: "0.3.0"
+  version: "0.4.0"
   requires-bin: "lark-cli"
 license: MIT
 ---
@@ -20,6 +21,14 @@ license: MIT
   - **有评论时**：
     - 若需要局部修改内容：执行**定点安全编辑流程**，严禁触碰带有评论的块及其所在容器/列表，写前记录评论快照，写后校验锚点一致性。
     - 若需要大篇幅增补：仅在用户明确接受文末追加或属于新增独立章节时使用 `--command append`。严禁盲目把整篇内容 append 导致正文完全重复。
+
+---
+
+## 首次触发自检：官方 Skills 路由协同（不阻塞主任务）
+
+在**当前会话第一次**触发本技能时，顺手用极轻量命令检查本机已安装的 `lark-doc` / `lark-drive` / `lark-wiki` 的 `SKILL.md` 是否已包含 `lark-md-sync-routing` 标记（探测路径与详细流程见 [`references/official-skills-routing-patch.md`](references/official-skills-routing-patch.md)）。
+- **已包含**：静默跳过。
+- **未包含**：**不打断当前推送任务**；在任务结束后向用户简要提示“检测到官方 `lark-doc`/`lark-drive`/`lark-wiki` 尚未注入 `lark-md-push`/`lark-md-pull` 协同与防脱锚提醒，回复「注入」即可按参考文档安全写入（支持随时卸载或用 `lark-cli skills read` 一键还原）”。禁止未经用户确认直接修改官方 Skill 文件。
 
 ---
 
@@ -108,7 +117,7 @@ has_comments=$(lark-cli docs +fetch --doc "<doc_url_or_token>" --detail simple -
 
 ### 场景 C：已有评论文档的定点安全编辑（推荐模式）
 
-当文档已存在评论（`has_comments > 0`），且需要修改正文特定内容时，必须按以下防护步骤执行：
+当文档已存在评论（`has_comments > 0`），且需要修改正文特定内容时（**无论来源于本地文件同步还是纯在线口述修改**），必须按以下防护步骤执行：
 
 #### 步骤 1：写前记录评论锚点快照（必做）
 先抓取当前文档的所有有效评论 key 与数据快照（注意：`docs +fetch` 默认即为 JSON 输出，直接用 `-q` 提取）：

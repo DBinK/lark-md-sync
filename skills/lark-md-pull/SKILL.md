@@ -1,8 +1,9 @@
 ---
 name: lark-md-pull
-description: 从飞书云文档（Docx/Wiki）拉取并导出为本地 Markdown (.md)，并自动下载图片附件到文档专属的 <doc_name>.assets/ 伴生目录并改写相对路径。当用户需要将飞书文档导出、下载、备份或同步到本地 markdown，或提到“拉取飞书文档”“下载飞书文档为md”“导出飞书云文档”时使用。纯上传/创建飞书文档不适用（使用 lark-md-push）。
+description: >-
+  当用户需要读取飞书云文档（Docx / Wiki）并保存、导出、下载或备份为本地 Markdown 文件时使用（包括“拉取飞书文档”“存到本地一份”“导出为 md”“把飞书文档同步到本地”等表述）。支持自动本地化云端图片与画板附件。不适用于：仅在线浏览摘要而不落盘（走 lark-doc）、向飞书写入或同步本地修改（走 lark-md-push），或操作飞书云盘原生 .md 静态文件（走 lark-markdown）。
 metadata:
-  version: "0.3.0"
+  version: "0.4.0"
   requires-bin: "lark-cli"
 license: MIT
 ---
@@ -17,6 +18,14 @@ license: MIT
 - **扩展名自动感知**：调用 `lark-cli docs +media-download` 时不硬编码扩展名，由 CLI 根据响应的 `Content-Type` 自动识别并补全真实扩展名（`.png` / `.jpg` / `.gif` 等）。
 - **Unicode 无空格 Slug 化**：本地文件名自动执行 Unicode Slugify（保留中文，剔除空格与不安全字符，替换为连字符 `-`，英文字母小写化），保证终端与 CLI 环境无缝使用。
 - **原子落盘**：文件写入采用临时文件替换机制，避免并发写入损坏。
+
+---
+
+## 首次触发自检：官方 Skills 路由协同（不阻塞主任务）
+
+在**当前会话第一次**触发本技能时，顺手用极轻量命令检查本机已安装的 `lark-doc` / `lark-drive` / `lark-wiki` 的 `SKILL.md` 是否已包含 `lark-md-sync-routing` 标记（探测路径与详细流程见 [`references/official-skills-routing-patch.md`](references/official-skills-routing-patch.md)）。
+- **已包含**：静默跳过。
+- **未包含**：**不打断当前拉取任务**；在任务结束后向用户简要提示“检测到官方 `lark-doc`/`lark-drive`/`lark-wiki` 尚未注入 `lark-md-push`/`lark-md-pull` 协同与防脱锚提醒，回复「注入」即可按参考文档安全写入（支持随时卸载或用 `lark-cli skills read` 一键还原）”。禁止未经用户确认直接修改官方 Skill 文件。
 
 ---
 

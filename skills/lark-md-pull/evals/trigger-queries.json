@@ -1,0 +1,58 @@
+[
+  {
+    "query": "把飞书文档 https://vvbwj1rjubu.feishu.cn/wiki/GG7DwloCAiX1eYk8JiHcLKhznoe 拉取并保存成我本地的 markdown 文件",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我把 https://example.feishu.cn/docx/abc123 存到本地一份，里面有图片的话一起下载下来",
+    "should_trigger": true
+  },
+  {
+    "query": "将这篇飞书知识库页面 https://example.feishu.cn/wiki/Wk456 导出为 ./docs/spec.md 备份",
+    "should_trigger": true
+  },
+  {
+    "query": "拉取飞书文档 https://example.feishu.cn/docx/def789 到本地",
+    "should_trigger": true
+  },
+  {
+    "query": "把产品刚写的飞书 PRD 同步一份到本地仓库的 notes/prd.md",
+    "should_trigger": true
+  },
+  {
+    "query": "下载飞书云文档为 md，放到 ~/Downloads/ 目录下",
+    "should_trigger": true
+  },
+  {
+    "query": "把本地的 notes/design.md 同步更新到飞书云文档 https://example.feishu.cn/docx/abc123",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我快速读一下 https://example.feishu.cn/docx/abc123 的内容，告诉我结论就行，不用保存文件",
+    "should_trigger": false
+  },
+  {
+    "query": "查看 https://example.feishu.cn/wiki/Wk456 的最新修订版本号和右侧评论",
+    "should_trigger": false
+  },
+  {
+    "query": "从飞书云盘下载一个原生 .md 文件到本地（drive file token: boxcn123）",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我把本地的 ./report.md 发布成一篇新的飞书云文档",
+    "should_trigger": false
+  },
+  {
+    "query": "把飞书多维表格 https://example.feishu.cn/base/bas123 导出为 CSV",
+    "should_trigger": false
+  },
+  {
+    "query": "总结一下昨天本地 git diff 的改动",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我在飞书云盘里新建一个叫“技术方案”的文件夹",
+    "should_trigger": false
+  }
+]

@@ -1,0 +1,70 @@
+[
+  {
+    "query": "把 notes/design/swe-62-global-args.md 推送到飞书云文档 https://vvbwj1rjubu.feishu.cn/wiki/GG7DwloCAiX1eYk8JiHcLKhznoe",
+    "should_trigger": true
+  },
+  {
+    "query": "我改好了本地的方案文档，帮我增量同步到飞书，注意保留我原来的评论和样式",
+    "should_trigger": true
+  },
+  {
+    "query": "再更新一次飞书那篇文档，把 diff 文件里的第 8 条也加上去",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我用 ./README.md 在飞书知识库我的空间里新建一篇在线文档",
+    "should_trigger": true
+  },
+  {
+    "query": "把这份带有 ./assets/arch.png 本地图片的设计说明书传到飞书 https://example.feishu.cn/docx/abc123",
+    "should_trigger": true
+  },
+  {
+    "query": "这篇飞书文档已经有同事评论了，帮我按本地最新改的内容局部更新过去，别把评论搞丢",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我把这份周报 markdown 上传为飞书文档并放到文件夹 fldcnXXXX 下",
+    "should_trigger": true
+  },
+  {
+    "query": "我在本地修改了 docs/api-spec.md，把它全量覆盖到飞书 https://example.feishu.cn/docx/xyz789",
+    "should_trigger": true
+  },
+  {
+    "query": "直接帮我把飞书文档 https://example.feishu.cn/wiki/GG7DwloCAiX1eYk8JiHcLKhznoe 里第 3 节的退出码 4 改成 1，别把上面的评论删了",
+    "should_trigger": true
+  },
+  {
+    "query": "把这个飞书文档 https://example.feishu.cn/wiki/Wk123 导出来存到本地 markdown",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我看一下 https://example.feishu.cn/docx/abc123 里写了什么，总结成三点发我",
+    "should_trigger": false
+  },
+  {
+    "query": "查一下这个飞书云文档 https://example.feishu.cn/wiki/GG7DwloCAiX1eYk8JiHcLKhznoe 上有哪些未解决的评论",
+    "should_trigger": false
+  },
+  {
+    "query": "把飞书云盘里那个原生 markdown 文件（file_token: mdcn123）改一下第 3 行",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我把飞书文档里的那个思维笔记转成架构图画板",
+    "should_trigger": false
+  },
+  {
+    "query": "把这个 Excel 表格 data/q4.xlsx 导入成飞书电子表格",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我在本地写一个 README.md，不用发到网上",
+    "should_trigger": false
+  },
+  {
+    "query": "给飞书群里发一条 markdown 格式的卡片消息通知大家下班开会",
+    "should_trigger": false
+  }
+]
