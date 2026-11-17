@@ -45,7 +45,7 @@ done
 
 ### 2.2 `lark-drive/SKILL.md`（推荐注入）
 
-建议插入位置：正文第一个一级标题下方。
+建议插入位置：官方自带的 `> **副本分流规则：**` 之后、`## 快速决策` 标题之前（与官方分流规则同级并列，不压过顶部的 `CRITICAL` 提示）。
 
 ```markdown
 <!-- BEGIN lark-md-sync-routing -->
@@ -56,7 +56,7 @@ done
 
 ### 2.3 `lark-wiki/SKILL.md`（可选注入）
 
-建议插入位置：正文第一个一级标题下方。
+建议插入位置：`## 快速决策` 标题下方第一条（紧跟身份选择，不压过顶部的 `CRITICAL` 提示）。
 
 ```markdown
 <!-- BEGIN lark-md-sync-routing -->
