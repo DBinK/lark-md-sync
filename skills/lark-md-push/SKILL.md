@@ -28,7 +28,7 @@ license: MIT
 
 在**当前会话第一次**触发本技能时，顺手用极轻量命令检查本机已安装的 `lark-doc` / `lark-drive` / `lark-wiki` 的 `SKILL.md` 是否已包含 `lark-md-sync-routing` 标记（探测路径与详细流程见 [`references/official-skills-routing-patch.md`](references/official-skills-routing-patch.md)）。
 - **已包含**：静默跳过。
-- **未包含**：**不打断当前推送任务**；在任务结束后向用户简要提示“检测到官方 `lark-doc`/`lark-drive`/`lark-wiki` 尚未注入 `lark-md-push`/`lark-md-pull` 协同与防脱锚提醒，回复「注入」即可按参考文档安全写入（支持随时卸载或用 `lark-cli skills read` 一键还原）”。禁止未经用户确认直接修改官方 Skill 文件。
+- **未包含**：**不打断当前推送任务**；在任务结束后向用户**强烈建议注入**协同路由：“检测到官方 `lark-doc` / `lark-drive` / `lark-wiki` 尚未注入防脱锚与路由引导。若不注入，后续口述「更新/修改飞书文档」时极易直接命中官方技能导致评论脱锚，**强烈建议回复「注入」按参考文档安全写入**（带边界注释，随时可精准卸载或用 `lark-cli skills read` 一键还原官方原版）”。禁止未经用户确认直接修改官方 Skill 文件。
 
 ---
 

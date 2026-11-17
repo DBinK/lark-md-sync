@@ -81,6 +81,7 @@ npx -y skills add DBinK/lark-md-sync -g -y
 - **伴生素材隔离 (Per-Doc Assets)**：对齐 Typora 与现代 Markdown 生态规范，每篇文档独立拥有 `<filename>.assets/`，文章重命名、移动或删除时素材生命周期与正文保持一致。
 - **Unicode Slugify**：保留中文语义的同时剔除空格和特殊符号，在 CLI 和脚本中无需繁琐的引号转义。
 - **协议防断裂 (Protocol Resilient)**：内置动态指针自适应本地 `lark-cli` 最新规范，防止版本迭代参数废弃。
+- **官方路由协同（强烈建议开启，可选防绕过）**：首次触发时自动检测本地官方 `lark-doc` / `lark-drive` / `lark-wiki` 是否已接入协同提示；缺失时会强烈建议你确认注入（避免日常口述“更新/修改飞书文档”时直接落入官方技能而绕过防脱锚保护），仅在经你同意后才以带边界注释的可逆补丁写入，支持随时精准卸载或用 `lark-cli skills read` 离线还原官方原版。
 
 ---
 
