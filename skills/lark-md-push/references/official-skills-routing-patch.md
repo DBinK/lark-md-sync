@@ -9,7 +9,7 @@
 飞书官方 Skills 可能安装在以下任一客户端目录（按实际存在目录逐一检查，跳过符号链接指向同一目录的重复路径）：
 
 ```bash
-PATCH_VERSION="0.4.0"
+PATCH_VERSION="0.5.0"
 for dir in \
   "$HOME/.gemini/antigravity-cli/skills" \
   "$HOME/.claude/skills" \
@@ -36,17 +36,17 @@ done
 
 ## 2. 注入内容定义（带来源、版本与幂等边界标记）
 
-所有注入内容均用 `<!-- BEGIN lark-md-sync-routing source=DBinK/lark-md-sync version=0.4.0 -->` 与 `<!-- END lark-md-sync-routing -->` 包裹，便于来源溯源、版本校验、原地幂等更新或无损卸载。
+所有注入内容均用 `<!-- BEGIN lark-md-sync-routing source=DBinK/lark-md-sync version=0.5.0 -->` 与 `<!-- END lark-md-sync-routing -->` 包裹，便于来源溯源、版本校验、原地幂等更新或无损卸载。
 
 ### 2.1 `lark-doc/SKILL.md`（核心必注）
 
 建议插入位置：`## 场景与 Shortcut 路由` 标题下方（或正文首段提示之后）。
 
 ```markdown
-<!-- BEGIN lark-md-sync-routing source=DBinK/lark-md-sync version=0.4.0 -->
+<!-- BEGIN lark-md-sync-routing source=DBinK/lark-md-sync version=0.5.0 -->
 > **本地 Markdown 与正文安全编辑协同路由（lark-md-sync）**：
 > - 涉及将本地 `.md` 上传、推送、增量同步到飞书文档，**或直接在线修改、更新、增补飞书云文档正文**，**优先加载 `lark-md-push`**；将飞书文档导出为本地 `.md`（含 `.assets/` 图片），**优先加载 `lark-md-pull`**。
-> - 修改**已有评论**的飞书文档时，严禁直接对带 `comment-refs` 的文本执行 `str_replace`、`block_delete` 或全篇 `overwrite`，务必按 `lark-md-push` 场景 C 执行写前/写后 `reference_map.comments` 比对。
+> - 更新已有飞书文档时，**不要直接全篇 `overwrite`**（避免丢失远端手动高亮、排版改动与评论），优先按 `lark-md-push` 执行增量保真同步；修改**已有评论**的文档时，严禁直接对带 `comment-refs` 的文本执行 `str_replace`、`block_delete` 或全篇 `overwrite`，务必按 `lark-md-push` 场景 C 执行写前/写后 `reference_map.comments` 比对。
 <!-- END lark-md-sync-routing -->
 ```
 
@@ -55,7 +55,7 @@ done
 建议插入位置：官方自带的 `> **副本分流规则：**` 之后、`## 快速决策` 标题之前（与官方分流规则同级并列，不压过顶部的 `CRITICAL` 提示）。
 
 ```markdown
-<!-- BEGIN lark-md-sync-routing source=DBinK/lark-md-sync version=0.4.0 -->
+<!-- BEGIN lark-md-sync-routing source=DBinK/lark-md-sync version=0.5.0 -->
 > **本地 Markdown 导入协同路由（lark-md-sync）**：
 > - 若用户需要把本地 `.md` 导入、上传或同步为飞书在线文档（Docx / Wiki），尤其需要处理相对路径图片或保留目标文档已有评论时，**优先转交 `lark-md-push`**（不要直接用 `drive +import` 覆盖）。
 <!-- END lark-md-sync-routing -->
@@ -66,7 +66,7 @@ done
 建议插入位置：`## 快速决策` 标题下方第一条（紧跟身份选择，不压过顶部的 `CRITICAL` 提示）。
 
 ```markdown
-<!-- BEGIN lark-md-sync-routing source=DBinK/lark-md-sync version=0.4.0 -->
+<!-- BEGIN lark-md-sync-routing source=DBinK/lark-md-sync version=0.5.0 -->
 > **知识库正文 Markdown 协同路由（lark-md-sync）**：
 > - `lark-wiki` 仅负责知识空间、成员与节点层级管理；涉及 `/wiki/` 节点正文的本地 `.md` 推送、增量同步或导出，**请转交 `lark-md-push` / `lark-md-pull`**。
 <!-- END lark-md-sync-routing -->
